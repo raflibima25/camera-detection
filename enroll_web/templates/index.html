@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Face Enrollment</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-title { font-size: 1.05rem; font-weight: 600; color: #e6edf3; }
+    .pill {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 9px;
+      border-radius: 20px; background: #238636; color: #fff;
+    }
+
+    /* ---- Layout ---- */
+    .container { max-width: 860px; margin: 36px auto; padding: 0 20px; }
+
+    /* ---- Cards ---- */
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 0.72rem; font-weight: 700;
+      color: #8b949e; text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 18px;
+    }
+
+    /* ---- Alerts ---- */
+    .alert {
+      padding: 12px 16px; border-radius: 8px;
+      margin-bottom: 20px; font-size: 0.88rem; line-height: 1.5;
+    }
+    .alert-ok  { background: #0d2a1a; border: 1px solid #238636; color: #3fb950; }
+    .alert-err { background: #2d1215; border: 1px solid #da3633; color: #f85149; }
+
+    /* ---- Form ---- */
+    .form-row {
+      display: flex; flex-wrap: wrap;
+      gap: 14px; align-items: flex-end;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label { font-size: 0.78rem; color: #8b949e; font-weight: 500; }
+
+    input[type="text"] {
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 6px; padding: 8px 12px;
+      color: #e6edf3; font-size: 0.9rem; width: 230px;
+    }
+    input[type="text"]:focus { outline: none; border-color: #388bfd; }
+    input[type="text"]::placeholder { color: #484f58; }
+
+    input[type="file"] {
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 6px; padding: 7px 12px;
+      color: #8b949e; font-size: 0.85rem; cursor: pointer;
+    }
+
+    .btn {
+      padding: 8px 18px; border: none; border-radius: 6px;
+      font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: filter .15s;
+      white-space: nowrap;
+    }
+    .btn:hover { filter: brightness(1.12); }
+    .btn-primary { background: #238636; color: #fff; }
+    .btn-danger  {
+      background: transparent; border: 1px solid #da3633;
+      color: #f85149; padding: 5px 12px; font-size: 0.8rem;
+    }
+    .btn-danger:hover { background: #da3633; color: #fff; }
+
+    /* ---- Table ---- */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left; font-size: 0.7rem; font-weight: 600;
+      color: #8b949e; text-transform: uppercase;
+      letter-spacing: .06em; padding: 0 12px 10px;
+    }
+    td {
+      padding: 11px 12px; border-top: 1px solid #21262d;
+      font-size: 0.88rem; vertical-align: middle;
+    }
+    tr:hover td { background: #1c2128; }
+
+    .id-badge {
+      background: #21262d; color: #8b949e;
+      font-family: ui-monospace, monospace; font-size: 0.75rem;
+      padding: 2px 7px; border-radius: 4px;
+    }
+    .name-text { color: #e6edf3; font-weight: 500; }
+    .date-text { color: #6e7681; font-size: 0.8rem; }
+    .emb-count {
+      display: inline-block; background: #0d2a1a; border: 1px solid #238636;
+      color: #3fb950; font-size: 0.72rem; font-weight: 700;
+      padding: 1px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle;
+    }
+
+    .empty {
+      text-align: center; color: #484f58;
+      padding: 44px 0; font-size: 0.9rem; line-height: 1.7;
+    }
+
+    /* ---- Count badge ---- */
+    .count-badge {
+      display: inline-block; background: #21262d; color: #8b949e;
+      font-size: 0.7rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 20px;
+      margin-left: 8px; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-title">Camera Detection — Face Enrollment</span>
+  <span class="pill">LIVE</span>
+</div>
+
+<div class="container">
+
+  {% if msg %}
+  <div class="alert alert-ok">{{ msg }}</div>
+  {% endif %}
+  {% if err %}
+  <div class="alert alert-err">{{ err }}</div>
+  {% endif %}
+
+  <!-- Webcam enrollment (recommended) -->
+  <div class="card" style="border-color:#238636;">
+    <div class="card-title" style="color:#3fb950;">Multi-Pose Enrollment (Recommended)</div>
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:220px;">
+        <div style="font-size:.95rem;color:#e6edf3;font-weight:600;margin-bottom:6px;">Enroll with Camera</div>
+        <div style="font-size:.82rem;color:#8b949e;line-height:1.6;">
+          Capture <strong style="color:#c9d1d9;">5 face poses</strong> — front, right, left, smile.
+          Recognition accuracy is significantly higher than uploading a single photo.
+        </div>
+      </div>
+      <a href="/webcam" class="btn btn-primary" style="text-decoration:none;white-space:nowrap;">Open Camera</a>
+    </div>
+  </div>
+
+  <!-- Photo upload form (alternative) -->
+  <div class="card">
+    <div class="card-title">Upload Photo (Alternative)</div>
+    <form action="/enroll" method="post" enctype="multipart/form-data">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input id="name" type="text" name="name" placeholder="e.g. John Smith" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="photo">Face Photo (multiple files allowed)</label>
+          <input id="photo" type="file" name="photo" accept="image/*" multiple required />
+        </div>
+        <button type="submit" class="btn btn-primary">Enroll</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Enrolled Faces list -->
+  <div class="card">
+    <div class="card-title">
+      Enrolled Faces
+      <span class="count-badge">{{ faces | length }}</span>
+    </div>
+
+    {% if faces %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Embeddings</th>
+            <th>Enrolled</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for name, count, first_enrolled in faces %}
+          <tr>
+            <td><span class="name-text">{{ name }}</span></td>
+            <td><span class="emb-count">{{ count }} poses</span></td>
+            <td><span class="date-text">{{ first_enrolled }}</span></td>
+            <td>
+              <form action="/delete/by-name" method="post"
+                    onsubmit="return confirm('Delete all {{ count }} embeddings for {{ name }}?')">
+                <input type="hidden" name="name" value="{{ name }}" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">
+      No faces enrolled yet.<br>
+      Upload a photo above to get started.
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+</body>
+</html>

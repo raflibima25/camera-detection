@@ -1,0 +1,26 @@
+# Phase 0 — Base
+opencv-python==4.10.0.84
+# PENTING: easyocr install opencv-python-headless (tanpa GUI).
+# Setelah install easyocr, jalankan:
+#   pip uninstall opencv-python-headless -y && pip install opencv-python==4.10.0.84
+python-dotenv==1.0.1
+numpy==1.26.4
+
+# Phase 1 — Face Recognition
+insightface==0.7.3
+onnxruntime-gpu==1.21.0
+# Ganti ke onnxruntime==1.21.0 jika tidak ada GPU NVIDIA
+
+# Phase 2 — Pose Skeleton
+mediapipe==0.10.14
+
+# Phase 3 — License Plate
+fast-alpr==0.4.0
+easyocr==1.7.2
+Pillow==10.4.0
+
+# Phase 4 — Web Enroll
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+jinja2==3.1.4
+python-multipart==0.0.9

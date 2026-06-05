@@ -1,0 +1,18 @@
+# Data & model weights — jangan commit
+data/
+models/
+
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
