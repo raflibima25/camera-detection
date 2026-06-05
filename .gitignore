@@ -16,3 +16,7 @@ env/
 # IDE
 .vscode/
 .idea/
+
+# CLAUDE
+CLAUDE.md
+PRD.md
